@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.all.buondua
+package eu.kanade.tachiyomi.extension.all.hentaidad
 
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.Filter
@@ -14,17 +14,17 @@ import org.jsoup.nodes.Element
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class Dummy() : ParsedHttpSource() {
+class HentaiDad() : ParsedHttpSource() {
     override val baseUrl = "https://hentaidad.com"
     override val lang = "all"
-    override val name = "Dummy"
+    override val name = "HentaiDad"
     override val supportsLatest = true
 
     // Latest
     override fun latestUpdatesFromElement(element: Element): SManga {
         val manga = SManga.create()
         manga.thumbnail_url = element.select("img .entry-image").attr("abs:src")
-        manga.title = element.select("img .entry-image").attr("abs:title").text()
+        manga.title = element.select("img .entry-image").attr("abs:title")
         manga.setUrlWithoutDomain(element.select("a").attr("abs:href"))
         return manga
     }
@@ -84,7 +84,7 @@ class Dummy() : ParsedHttpSource() {
 
     override fun pageListParse(document: Document): List<Page> {
         val pages = mutableListOf<Page>()
-        doc.select(".lightgallery img").forEach {
+        document.select(".lightgallery img").forEach {
             val itUrl = it.attr("abs:src")
             pages.add(Page(pages.size, "", itUrl))
         }
