@@ -7,12 +7,9 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
-import eu.kanade.tachiyomi.util.asJsoup
 import okhttp3.Request
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class RKemono() : ParsedHttpSource() {
     override val baseUrl = "https://kemono.su"
@@ -29,23 +26,19 @@ class RKemono() : ParsedHttpSource() {
         return manga
     }
 
-    override fun latestUpdatesNextPageSelector() {
-        return "#paginator-top .pagination-button-after-current:not(.pagination-button-disabled)"
-    }
+    override fun latestUpdatesNextPageSelector() = "#paginator-top .pagination-button-after-current:not(.pagination-button-disabled)"
 
     override fun latestUpdatesRequest(page: Int): Request {
-        return GET("$baseUrl/api/v1/posts?o=${(($page - 1) * 50)}")
+        return GET("$baseUrl/api/v1/posts?o=${((page - 1) * 50)}")
     }
 
-    override fun latestUpdatesSelector() {
-        return ".card-list__items > article.post-card"
-    }
+    override fun latestUpdatesSelector() = ".card-list__items > article.post-card"
 
     // Popular
     override fun popularMangaFromElement(element: Element) = latestUpdatesFromElement(element)
     override fun popularMangaNextPageSelector() = latestUpdatesNextPageSelector()
     override fun popularMangaRequest(page: Int): Request {
-        return GET("$baseUrl/api/v1/posts/popular?o=${(($page - 1) * 50)}")
+        return GET("$baseUrl/api/v1/posts/popular?o=${((page - 1) * 50)}")
     }
     override fun popularMangaSelector() = latestUpdatesSelector()
 
@@ -65,7 +58,8 @@ class RKemono() : ParsedHttpSource() {
     // Details
     override fun mangaDetailsParse(document: Document): SManga {
         val manga = SManga.create()
-        manga.title = document.select("header.post__header > div.post__info > h1 > span").first().text()
+        // manga.title = document.select("header.post__header > div.post__info > h1 > span").first()?.text()
+        manga.title = "No Title"
         manga.description = document.select(".video-title h1").text().trim()
         val genres = mutableListOf<String>()
         document.select("section#post-tags > div").first()!!.select("a").forEach {
